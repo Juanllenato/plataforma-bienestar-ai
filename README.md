@@ -11,6 +11,15 @@
 
 ---
 
+## 🎥 Demo
+
+https://github.com/Juanllenato/plataforma-bienestar-ai/raw/main/media/app-bienestar-demo.mp4
+
+> The agentic AI coach in action — operating the app through conversation.
+> ▶ [Download / watch the demo](./media/app-bienestar-demo.mp4)
+
+---
+
 ## 30-second pitch
 
 A mobile preventive-health platform built around one idea: **the user shouldn't navigate menus — they should talk to a coach that does the work for them.** The AI coach is not a chatbot bolted onto the app; it's an **agentic orchestrator** that calls 13 internal tools to read the user's profile, log meals from a photo, generate full health plans, project future biomarkers, search a clinical knowledge base (RAG), and search the web — all from one conversation, with streaming responses and safety guardrails.
