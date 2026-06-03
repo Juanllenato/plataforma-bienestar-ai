@@ -30,6 +30,8 @@ Underneath it is a **modular, multi-tenant backend** (FastAPI + PostgreSQL/pgvec
 
 ## The AI core: an agentic coach (tool calling)
 
+This is a true **agentic system**: a reason-act loop where the LLM plans, selects and calls tools, observes results, and decides the next step — not a fixed script. The orchestration is built directly on LLM function-calling and is **framework-portable**: the same tool schemas, router, and state map cleanly onto **LangChain / LangGraph** (tools → `@tool`, the routing + state machine → a `StateGraph` with conditional edges, the safety classifier → a guard node). The custom implementation exists for streaming control and cost; the architecture is the standard agent pattern these frameworks formalize.
+
 The conversational coach orchestrates these tools automatically based on intent — streaming, with live status ("Searching the web…", "Checking your measurements…"):
 
 | Tool | What it does | AI |
@@ -103,7 +105,7 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) and [`FEATURES.md`](./FEATURES.md) fo
 | Mobile | React Native · Expo SDK 54 · expo-router · Zustand · TanStack Query · Reanimated 3 · Skia · `react-native-sse` (chat streaming) |
 | Backend | Python 3.12 · FastAPI · SQLAlchemy 2.0 async · Pydantic v2 · Alembic |
 | Data | PostgreSQL 16 + **pgvector** · Redis 7 |
-| AI | LLM coach (Together/OpenAI) · `gpt-4o-mini` vision · OpenAI embeddings · RAG · tool calling · prompt caching |
+| AI | Agentic LLM coach (Together/OpenAI) · tool calling / orchestration (**LangGraph-portable**) · `gpt-4o-mini` vision · OpenAI embeddings · RAG · prompt caching |
 | Auth | Supabase Auth |
 | Monorepo | pnpm workspaces |
 
@@ -111,7 +113,9 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) and [`FEATURES.md`](./FEATURES.md) fo
 
 ## Why it belongs in an AI portfolio
 
-This isn't "I called an LLM." It's **agentic AI engineering**: tool orchestration over real application state, RAG with hybrid vector+text search, multimodal input (vision), a predictive projection engine, and the unglamorous 80% — safety classification, guarded mutations, per-request feature flags, provider fallback, and privacy-by-design — that decides whether AI ships or breaks.
+This isn't "I called an LLM." It's **agentic AI engineering**: tool orchestration over real application state (LangGraph-portable), RAG with hybrid vector+text search, multimodal input (vision), a predictive projection engine, and the unglamorous 80% — safety classification, guarded mutations, per-request feature flags, provider fallback, and privacy-by-design — that decides whether AI ships or breaks.
+
+> I evaluate AI features the same way I build them — with a versioned test set, metrics, and CI gating. See my [**llm-eval-harness**](https://github.com/Juanllenato/llm-eval-harness) for the methodology.
 
 ---
 
