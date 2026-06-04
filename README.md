@@ -2,9 +2,12 @@
 <p align="center"><i>An AI-powered preventive-health mobile app where users operate the entire product through a conversational AI coach.</i></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Type-Engineering%20Case%20Study-6C2BD9?style=flat-square" />
-  <img src="https://img.shields.io/badge/AI-Agentic%20Tool%20Calling-0EA5E9?style=flat-square" />
-  <img src="https://img.shields.io/badge/Mobile-React%20Native%20%2B%20Expo-22C55E?style=flat-square" />
+  <img src="https://img.shields.io/badge/AI-Agentic%20Tool%20Calling-6C2BD9?style=flat-square" />
+  <img src="https://img.shields.io/badge/RAG-pgvector-0EA5E9?style=flat-square&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/LangGraph-portable-1C3C3C?style=flat-square" />
+  <img src="https://img.shields.io/badge/Mobile-React%20Native%20%2B%20Expo-22C55E?style=flat-square&logo=expo&logoColor=white" />
+  <img src="https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vision-Multimodal-F59E0B?style=flat-square" />
 </p>
 
 > **Engineering-only case study** by [Juan Perez](https://github.com/Juanllenato). No proprietary source code or user data is reproduced here — this documents the *architecture and AI engineering*. Companion to my [PrevenSalud AI CRM case study](https://github.com/Juanllenato/prevensalud-ai-crm).
@@ -31,6 +34,21 @@ Underneath it is a **modular, multi-tenant backend** (FastAPI + PostgreSQL/pgvec
 ## The AI core: an agentic coach (tool calling)
 
 This is a true **agentic system**: a reason-act loop where the LLM plans, selects and calls tools, observes results, and decides the next step — not a fixed script. The orchestration is built directly on LLM function-calling and is **framework-portable**: the same tool schemas, router, and state map cleanly onto **LangChain / LangGraph** (tools → `@tool`, the routing + state machine → a `StateGraph` with conditional edges, the safety classifier → a guard node). The custom implementation exists for streaming control and cost; the architecture is the standard agent pattern these frameworks formalize.
+
+```mermaid
+flowchart TD
+  USER["User message (chat, streaming)"] --> GUARD["Safety classifier<br/>scope + anti-jailbreak"]
+  GUARD -->|in scope| COACH["Agentic AI Coach"]
+  GUARD -->|out of scope| REFUSE["Reasoned refusal"]
+  COACH --> LOOP{"Reason–Act loop<br/>(plan → call tool → observe)"}
+  LOOP --> RAG["search_knowledge_base<br/>RAG · pgvector hybrid"]
+  LOOP --> VISION["meal photo → vision<br/>(analyzed in memory, not stored)"]
+  LOOP --> PROJ["generate_projection<br/>predictive engine"]
+  LOOP --> DATA["profile / measurements /<br/>nutrition / workouts"]
+  LOOP --> WEB["web_search · cited"]
+  LOOP --> STATE[("PostgreSQL + pgvector")]
+  LOOP -->|final answer| USER
+```
 
 The conversational coach orchestrates these tools automatically based on intent — streaming, with live status ("Searching the web…", "Checking your measurements…"):
 
